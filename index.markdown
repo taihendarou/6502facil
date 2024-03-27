@@ -38,66 +38,38 @@ LDA #$08
 STA $0202
 {% include end.html %}
 
-Hopefully the black area on the right now has three coloured "pixels" at the
-top left. (If this doesn't work, you'll probably need to upgrade your browser to
-something more modern, like Chrome or Firefox.)
+Espero que a área preta à direita agora tenha três "pixels" coloridos no canto superior esquerdo. (Se isso não funcionar, você provavelmente precisará atualizar seu navegador para algo mais moderno, como Chrome ou Firefox.)
 
-So, what's this program actually doing? Let's step through it with the
-debugger. Hit **Reset**, then check the **Debugger** checkbox to start the
-debugger. Click **Step** once. If you were watching carefully, you'll have
-noticed that `A=` changed from `$00` to `$01`, and `PC=` changed from `$0600` to
-`$0602`.
+Então, o que esse programa está fazendo, de fato? Vamos acompanhá-lo com o depurador. Clique em **Reset**, depois marque a caixa **Debugger** para iniciar o depurador. Clique em **Step** uma vez. Se você estava observando com atenção, terá notado que `A=` mudou de `$00` para `$01`, e `PC=` mudou de `$0600` para `$0602`.
 
-Any numbers prefixed with `$` in 6502 assembly language (and by extension, in
-this book) are in hexadecimal (hex) format. If you're not familiar with hex
-numbers, I recommend you read [the Wikipedia
-article](http://en.wikipedia.org/wiki/Hexadecimal). Anything prefixed with `#`
-is a literal number value. Any other number refers to a memory location.
+Qualquer número prefixado com `$` na linguagem de montagem 6502 (e, por extensão, neste livro) está no formato hexadecimal (hex). Se você não está familiarizado com números hexadecimais, recomendo que leia [o artigo da Wikipedia](http://en.wikipedia.org/wiki/Hexadecimal). Qualquer coisa prefixada com `#` é um valor numérico literal. Qualquer outro número se refere a um local de memória.
 
-Equipped with that knowledge, you should be able to see that the instruction
-`LDA #$01` loads the hex value `$01` into register `A`. I'll go into more
-detail on registers in the next section.
+Equipado com esse conhecimento, você deve ser capaz de perceber que a instrução `LDA #$01` carrega o valor hexadecimal `$01` no registrador `A`. Entrarei em mais detalhes sobre registradores na próxima seção.
 
-Press **Step** again to execute the second instruction. The top-left pixel of
-the simulator display should now be white. This simulator uses the memory
-locations `$0200` to `$05ff` to draw pixels on its display. The values `$00` to
-`$0f` represent 16 different colours (`$00` is black and `$01` is white), so
-storing the value `$01` at memory location `$0200` draws a white pixel at the
-top left corner. This is simpler than how an actual computer would output
-video, but it'll do for now.
+Pressione **Step** novamente para executar a segunda instrução. O pixel no canto superior esquerdo do display do simulador agora deve estar branco. Este simulador usa os locais de memória de `$0200` a `$05ff` para desenhar pixels em seu display. Os valores de `$00` a `$0f` representam 16 cores diferentes (`$00` é preto e `$01` é branco), então armazenar o valor `$01` no local de memória `$0200` desenha um pixel branco no canto superior esquerdo. Isso é mais simples do que como um computador real emitiria vídeo, mas serve por agora.
 
-So, the instruction `STA $0200` stores the value of the `A` register to memory
-location `$0200`. Click **Step** four more times to execute the rest of the
-instructions, keeping an eye on the `A` register as it changes.
+Então, a instrução `STA $0200` armazena o valor do registrador `A` no local de memória `$0200`. Clique em **Step** mais quatro vezes para executar o restante das instruções, mantendo um olho no registrador `A` conforme ele muda.
 
-### Exercises ###
+### Exercícios ###
 
-1. Try changing the colour of the three pixels.
-2. Change one of the pixels to draw at the bottom-right corner (memory location `$05ff`).
-3. Add more instructions to draw extra pixels.
+1. Tente trocar a cor dos três pixels.
+2. Mude a posição de um dos pixels, para que ele seja exibido na lateral inferior direita (endereço de memória `$05ff`).
+3. Insira novas instruções para exibir mais pixels.
 
 
-<h2 id='registers'>Registers and flags</h2>
+<h2 id='registers'>Registradores e flags</h2>
 
-We've already had a little look at the processor status section (the bit with
-`A`, `PC` etc.), but what does it all mean?
+Nós já mensionamos levemente a área de status do processador (os bits em
+`A`, `PC` etc.), mas o que isso significa de fato?
 
-The first line shows the `A`, `X` and `Y` registers (`A` is often called the
-"accumulator"). Each register holds a single byte. Most operations work on the
-contents of these registers.
+A primeira linha mostra os registradores `A`, `X` e `Y` (`A` é chamado de "acumulador"). Cada registrador armazena um único byte. A maioria das operações matemáticas do processador serão realizadas 
+com o contéudo desses registradores.
 
-`SP` is the stack pointer. I won't get into the stack yet, but basically this
-register is decremented every time a byte is pushed onto the stack, and
-incremented when a byte is popped off the stack.
+`SP` significa stack pointer. Não vamos entrar neste assunto agora, mas, basicamente, este é um registrador que decrementa cada vez que um byte é empurrado para a pilha (stack) e que incrementa sempre que um byte é retirado da pilha.
 
-`PC` is the program counter - it's how the processor knows at what point in the
-program it currently is. It's like the current line number of an executing
-script. In the JavaScript simulator the code is assembled starting at memory
-location `$0600`, so `PC` always starts there.
+`PC` significa program counter - é como o processador sabe em que ponto o programa está atualmente. É como se fosse a linha atual que está sendo executada em um script. Neste simulador em JavaScript, o código é montado a partir do endereço de memória `$6000`, então o `PC` sempre inicia com esse valor.
 
-The last section shows the processor flags. Each flag is one bit, so all seven
-flags live in a single byte. The flags are set by the processor to give
-information about the previous instruction. More on that later. [Read more
+A última sessão se refere as flags do processador. Cada flag é um bit, então as sete flags consistem em um único byte. As flags são acionadas pelo processador para nos dar informações sobre a instrução que acabou de ser executada. Falaremos mais sobre isso mais tarde. [Read more
 about the registers and flags here](https://web.archive.org/web/20210626024532/http://www.obelisk.me.uk/6502/registers.html).
 
 
