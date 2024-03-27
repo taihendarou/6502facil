@@ -15,38 +15,19 @@ System](http://en.wikipedia.org/wiki/Nintendo_Entertainment_System). Bender,
 em Futurama, [tem um processador 6502 como cérebro](http://www.transbyte.org/SID/SID-files/Bender_6502.jpg). 
 [Até o Terminator foi programado em 6502](http://www.pagetable.com/docs/terminator/00-37-23.jpg).
 
-So, why would you want to learn 6502? It's a dead language isn't it? Well,
-so's Latin. And they still teach that.
-[Q.E.D.](http://en.wikipedia.org/wiki/Q.E.D.)
+Então, por que você iria querer aprender 6502? É uma língua morta, não é? Bem, o latim também é. E ainda assim, eles continuam ensinando isso. [Q.E.D.](http://en.wikipedia.org/wiki/Q.E.D.)
 
-(Actually, I've been reliably informed that 6502 processors are still being
-produced by [Western Design Center](http://www.westerndesigncenter.com/wdc/w65c02s-chip.cfm)
-and [sold to hobbyists](http://www.mouser.co.uk/Search/Refine.aspx?Keyword=65C02), so clearly 6502
-*isn't* a dead language! Who knew?)
+(Na verdade, fui informado de maneira confiável que os processadores 6502 ainda estão sendo produzidos pelo [Western Design Center](http://www.westerndesigncenter.com/wdc/w65c02s-chip.cfm) e [vendidos para hobbistas](http://www.mouser.co.uk/Search/Refine.aspx?Keyword=65C02), então claramente 6502 *não* é uma língua morta! Quem diria?)
 
-Seriously though, I think it's valuable to have an understanding of assembly
-language. Assembly language is the lowest level of abstraction in computers -
-the point at which the code is still readable. Assembly language translates
-directly to the bytes that are executed by your computer's processor.
-If you understand how it works, you've basically become a computer
-[magician](http://skilldrick.co.uk/2011/04/magic-in-software-development/).
+Mas falando sério, acho que é valioso ter um entendimento da linguagem de montagem. A linguagem de montagem é o nível mais baixo de abstração em computadores - o ponto em que o código ainda é legível. A linguagem de montagem se traduz diretamente nos bytes que são executados pelo processador do seu computador. Se você entender como isso funciona, basicamente se tornou um [mágico](http://skilldrick.co.uk/2011/04/magic-in-software-development/) da computação.
 
-Then why 6502? Why not a *useful* assembly language, like
-[x86](http://en.wikipedia.org/wiki/X86)? Well, I don't think learning x86 is
-useful. I don't think you'll ever have to *write* assembly language in your day
-job - this is purely an academic exercise, something to expand your mind and
-your thinking. 6502 was originally written in a different age, a time when the majority of
-developers were writing assembly directly, rather than in these new-fangled
-high-level programming languages. So, it was designed to be written by humans.
-More modern assembly languages are meant to written by compilers, so let's
-leave it to them. Plus, 6502 is *fun*. Nobody ever called x86 *fun*.
+Então, por que 6502? Por que não uma linguagem de montagem *útil*, como [x86](http://en.wikipedia.org/wiki/X86)? Bem, eu não acho que aprender x86 seja útil. Não acho que você terá que *escrever* linguagem de montagem no seu trabalho diário - isso é puramente um exercício acadêmico, algo para expandir sua mente e seu pensamento. O 6502 foi originalmente escrito em uma época diferente, um tempo em que a maioria dos desenvolvedores estava escrevendo assembly diretamente, em vez de nessas novas linguagens de programação de alto nível. Então, foi projetado para ser escrito por humanos. As linguagens de montagem mais modernas são feitas para serem escritas por compiladores, então vamos deixar isso para eles. Além disso, 6502 é *divertido*. Ninguém nunca chamou x86 de *divertido*.
 
 
-<h2 id="first-program">Our first program</h2>
+<h2 id="first-program">Nosso primeiro programa</h2>
 
-So, let's dive in! That thing below is a little [JavaScript 6502 assembler and
-simulator](https://github.com/skilldrick/6502js) that I adapted for this book.
-Click **Assemble** then **Run** to assemble and run the snippet of assembly language.
+Então, vamos começar! Abaixo temos um pequeno assembler e [simulador de processador 6502 feito em JavaScript](https://github.com/skilldrick/6502js) que foi adaptado para este material.
+Clique em **Assemble** e então em **Run** para montar e executar o pedaço de código em linguagem assembly.
 
 {% include start.html %}
 LDA #$01
