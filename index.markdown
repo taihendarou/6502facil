@@ -73,24 +73,21 @@ A última sessão se refere as flags do processador. Cada flag é um bit, então
 about the registers and flags here](https://web.archive.org/web/20210626024532/http://www.obelisk.me.uk/6502/registers.html).
 
 
-<h2 id='instructions'>Instructions</h2>
+<h2 id='instructions'>Intruções</h2>
 
-Instructions in assembly language are like a small set of predefined functions.
-All instructions take zero or one arguments. Here's some annotated
-source code to introduce a few different instructions:
+Instruções, em linguagem assembly, são como pequenos conjuntos de funções pré-definidas. As instruções podem ou não conter também um argumento. Veja a seguir um código comentado para introduzir algumas instruções:
 
 {% include start.html %}
-LDA #$c0  ;Load the hex value $c0 into the A register
-TAX       ;Transfer the value in the A register to X
-INX       ;Increment the value in the X register
-ADC #$c4  ;Add the hex value $c4 to the A register
-BRK       ;Break - we're done
+LDA #$c0  ;Carrega o valor hexadecimal $c0 no registrador A
+TAX       ;Transfere o valor de A para o registrador X
+INX       ;Incrementa o valor do registrador X
+ADC #$c4  ;Adiciona o valor hexadecimal $c4 ao valor já presente no registrador A
+BRK       ;Interrompe a execução do programa
 {% include end.html %}
 
-Assemble the code, then turn on the debugger and step through the code, watching
-the `A` and `X` registers. Something slightly odd happens on the line `ADC #$c4`.
-You might expect that adding `$c4` to `$c0` would give `$184`, but this
-processor gives the result as `$84`. What's up with that?
+Monte o código, depois ative o depurador (debugger) e siga pelo código, instrução por instrução, observando 
+os registradores `A` e `X`. Talvez você note algo após a linha `ADC #$c4`, pois ao adicionarmos `$c4` a `$c0`, esperaríamos pelo resultado `$184`, mas o processador 
+acaba apresentando o resultado como `$84`. Por que isso acontece?
 
 The problem is, `$184` is too big to fit in a single byte (the max is `$FF`),
 and the registers can only hold a single byte.  It's OK though; the processor
