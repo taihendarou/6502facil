@@ -85,17 +85,15 @@ ADC #$c4  ;Adiciona o valor hexadecimal $c4 ao valor já presente no registrador
 BRK       ;Interrompe a execução do programa
 {% include end.html %}
 
-Monte o código, depois ative o depurador (debugger) e siga pelo código, instrução por instrução, observando 
+Monte o código (assembly), depois ative o depurador (debugger) e siga pelo código, instrução por instrução, observando 
 os registradores `A` e `X`. Talvez você note algo após a linha `ADC #$c4`, pois ao adicionarmos `$c4` a `$c0`, esperaríamos pelo resultado `$184`, mas o processador 
 acaba apresentando o resultado como `$84`. Por que isso acontece?
 
-The problem is, `$184` is too big to fit in a single byte (the max is `$FF`),
-and the registers can only hold a single byte.  It's OK though; the processor
-isn't actually dumb. If you were looking carefully enough, you'll have noticed
-that the carry flag was set to `1` after this operation. So that's how you
-know.
+O problema é que `$184` é grande demais para caber em um único byte (o máximo é `$FF`), e os registradores deste processador só podem conter um único byte. 
+No entanto, esta reação já foi prevista pelos desenvolvedores. Se você observar atentamente, 
+notará que a flag carry foi definida como `1` após esta operação.
 
-In the simulator below **type** (don't paste) the following code:
+Experimente **digitar** (não copie e cole) o código a seguir no simulador:
 
     LDA #$80
     STA $01
@@ -103,27 +101,25 @@ In the simulator below **type** (don't paste) the following code:
 
 {% include widget.html %}
 
-An important thing to notice here is the distinction between `ADC #$01` and
-`ADC $01`. The first one adds the value `$01` to the `A` register, but the
-second adds the value stored at memory location `$01` to the `A` register.
+Uma coisa importante a se notar aqui é a distinção entre `ADC #$01` e `ADC $01`. 
+O primeiro adiciona o valor `$01` ao registrador `A`, mas o segundo adiciona o 
+valor armazenado no endereço de memória `$01` ao registrador `A`.
 
-Assemble, check the **Monitor** checkbox, then step through these three
-instructions. The monitor shows a section of memory, and can be helpful to
-visualise the execution of programs. `STA $01` stores the value of the `A`
-register at memory location `$01`, and `ADC $01` adds the value stored at the
-memory location `$01` to the `A` register. `$80 + $80` should equal `$100`, but
-because this is bigger than a byte, the `A` register is set to `$00` and the
-carry flag is set. As well as this though, the zero flag is set. The zero flag
-is set by all instructions where the result is zero.
+Monte o programa (assembly), marque a opção **Monitor**, e então navegue por estas 
+três instruções. O monitor mostrará uma seção da memória, e pode ser útil para 
+visualizar o que acontece durante a execução de programas. `STA $01` armazena o 
+valor do registrador `A` no local de memória `$01`, e `ADC $01` adiciona o valor 
+armazenado no local de memória `$01` ao registrador `A`. `$80 + $80` deveria ser 
+igual a `$100`, mas como esse valor estrapola o limite de um byte, o registrador 
+`A` é definido como `$00` e a flag de carry é ativada. Além disso, a flag de 
+zero também é ativada. A flag Zero sempre será ativada quando o resultado de uma 
+instrução for zero.
 
-A full list of the 6502 instruction set is [available
-here](http://www.6502.org/tutorials/6502opcodes.html) and
-[here](http://www.obelisk.me.uk/6502/reference.html) (I usually refer to
-both pages as they have their strengths and weaknesses). These pages detail the
-arguments to each instruction, which registers they use, and which flags they
-set. They are your bible.
+Uma lista completa do conjunto de instruções 6502 está [disponível aqui](http://www.6502.org/tutorials/6502opcodes.html) 
+e [aqui](http://www.obelisk.me.uk/6502/reference.html) (Eu geralmente me refiro a ambas as páginas, pois elas têm seus 
+pontos fortes e fracos). Essas páginas detalham os argumentos de cada instrução, quais registradores elas usam, e quais flags elas definem.
 
-### Exercises ###
+### Exercícios ###
 
 1. You've seen `TAX`. You can probably guess what `TAY`, `TXA` and `TYA` do,
    but write some code to test your assumptions.
@@ -132,6 +128,9 @@ set. They are your bible.
 3. The opposite of `ADC` is `SBC` (subtract with carry). Write a program that
    uses this instruction.
 
+1. Já vimos a instrução `TAX`. Então, você pode supor o que `TAY`, `TXA` e `TYA` fazem. Escreva um código com elas para confirmar se é isso mesmo.
+2. Reescreva o primeiro exemplo desta sessão, mas utilize o registrador `Y` ao invés do registrador `X`
+3. O oposto de `ADC` (adicionar com carry / add with carry) é `SBC` (subtrair com carry / subtract with carry). Escreva um programa que use essa instrução.
 
 <h2 id='branching'>Branching</h2>
 
