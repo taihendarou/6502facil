@@ -17,7 +17,7 @@ em Futurama, [tem um processador 6502 como cérebro](http://www.transbyte.org/SI
 
 Então, por que você iria querer aprender 6502? É uma língua morta, não é? Bem, o latim também é. E ainda assim, eles continuam ensinando isso. [Q.E.D.](http://en.wikipedia.org/wiki/Q.E.D.)
 
-(Na verdade, fui informado de maneira confiável que os processadores 6502 ainda estão sendo produzidos pelo [Western Design Center](http://www.westerndesigncenter.com/wdc/w65c02s-chip.cfm) e [vendidos para hobbistas](http://www.mouser.co.uk/Search/Refine.aspx?Keyword=65C02), então claramente 6502 *não* é uma língua morta! Quem diria?)
+(Na verdade, fui informado de maneira confiável que os processadores 6502 ainda estão sendo produzidos pelo [Western Design Center](http://www.westerndesigncenter.com/wdc/w65c02s-chip.cfm) e [vendidos para hobbistas](http://www.mouser.co.uk/Search/Refine.aspx?Keyword=65C02), então claramente 6502 *não* é uma linguagem morta! Quem diria?)
 
 Mas falando sério, acho que é valioso ter um entendimento da linguagem de montagem. A linguagem de montagem é o nível mais baixo de abstração em computadores - o ponto em que o código ainda é legível. A linguagem de montagem se traduz diretamente nos bytes que são executados pelo processador do seu computador. Se você entender como isso funciona, basicamente se tornou um [mágico](http://skilldrick.co.uk/2011/04/magic-in-software-development/) da computação.
 
@@ -121,18 +121,11 @@ pontos fortes e fracos). Essas páginas detalham os argumentos de cada instruç�
 
 ### Exercícios ###
 
-1. You've seen `TAX`. You can probably guess what `TAY`, `TXA` and `TYA` do,
-   but write some code to test your assumptions.
-2. Rewrite the first example in this section to use the `Y` register instead of
-   the `X` register.
-3. The opposite of `ADC` is `SBC` (subtract with carry). Write a program that
-   uses this instruction.
-
 1. Já vimos a instrução `TAX`. Então, você pode supor o que `TAY`, `TXA` e `TYA` fazem. Escreva um código com elas para confirmar se é isso mesmo.
 2. Reescreva o primeiro exemplo desta sessão, mas utilize o registrador `Y` ao invés do registrador `X`
 3. O oposto de `ADC` (adicionar com carry / add with carry) é `SBC` (subtrair com carry / subtract with carry). Escreva um programa que use essa instrução.
 
-<h2 id='branching'>Branching</h2>
+<h2 id='branching'>Ramificações (Branching)</h2>
 
 So far we're only able to write basic programs without any branching logic.
 Let's change that.
