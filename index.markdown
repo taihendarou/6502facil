@@ -127,52 +127,37 @@ pontos fortes e fracos). Essas páginas detalham os argumentos de cada instruç�
 
 <h2 id='branching'>Ramificações (Branching)</h2>
 
-So far we're only able to write basic programs without any branching logic.
-Let's change that.
+Até agora, só conseguimos escrever programas básicos sem qualquer lógica de ramificação, loop ou dinâmica para transitar por diferentes regiões do código. Todas as instruções foram executadas da primeira até a última, em sequência. Chegou a hora de mudar isso!
 
-6502 assembly language has a bunch of branching instructions, all of which
-branch based on whether certain flags are set or not. In this example we'll be
-looking at `BNE`: "Branch on not equal".
+A linguagem assembly para 6502 possui várias instruções de ramificação, todas baseadas em se certas flags estão definidas ou não. Neste exemplo, vamos olhar para `BNE`: "Branch on not equal" (Ramificar se não igual).
 
 {% include start.html %}
   LDX #$08
-decrement:
+decremento:
   DEX
   STX $0200
   CPX #$03
-  BNE decrement
+  BNE decremento
   STX $0201
   BRK
 {% include end.html %}
 
-First we load the value `$08` into the `X` register. The next line is a label.
-Labels just mark certain points in a program so we can return to them later.
-After the label we decrement `X`, store it to `$0200` (the top-left pixel), and
-then compare it to the value `$03`.
-[`CPX`](http://www.obelisk.me.uk/6502/reference.html#CPX) compares the
-value in the `X` register with another value. If the two values are equal, the
-`Z` flag is set to `1`, otherwise it is set to `0`.
+Primeiro carregamos o valor `$08` no registrador `X`. A próxima linha é um rótulo.
+Rótulos apenas marcam certos pontos em um programa para que possamos retornar a eles mais tarde. Você identificará um ródulo pela presença de um `:` após a expressão.
+Após o rótulo, decrementamos `X`, armazenamos em `$0200` (o pixel superior esquerdo) e então comparamos ao valor `$03`.
+[`CPX`](http://www.obelisk.me.uk/6502/reference.html#CPX) compara o valor no registrador `X` com outro valor. Se os dois valores forem iguais, a flag `Z` é definida como `1`, caso contrário, é definida como `0`.
 
-The next line, `BNE decrement`, will shift execution to the decrement label if
-the `Z` flag is set to `0` (meaning that the two values in the `CPX` comparison
-were not equal), otherwise it does nothing and we store `X` to `$0201`, then
-finish the program.
+A próxima linha, `BNE decremento`, deslocará a execução do programa para o rótulo de decremento se a flag `Z` for `0` (significando que os dois valores na comparação `CPX` não eram iguais), caso contrário, não faz nada e armazenamos `X` em `$0201`, então terminamos o programa.
 
-In assembly language, you'll usually use labels with branch instructions. When
-assembled though, this label is converted to a single-byte relative offset (a
-number of bytes to go backwards or forwards from the next instruction) so
-branch instructions can only go forward and back around 256 bytes. This means
-they can only be used to move around local code. For moving further you'll need
-to use the jumping instructions.
+Em assembly, geralmente você usará rótulos com instruções de ramificação. Quando montado, no entanto, este rótulo é convertido em um deslocamento relativo de um único byte (um número de bytes para ir para trás ou para frente da próxima instrução) então instruções de ramificação só podem ir para frente e para trás em torno de 256 bytes (ou, em hexadecimal, de #$00 a #$FF). Isso significa que eles só podem ser usados para mover pela região próxima do código. Para saltos mais distantes, usaremos as instruções de salto, que serão ensinadas mais a frente.
 
-### Exercises ###
+### Exercícios ###
 
-1. The opposite of `BNE` is `BEQ`. Try writing a program that uses `BEQ`.
-2. `BCC` and `BCS` ("branch on carry clear" and "branch on carry set") are used
-   to branch on the carry flag. Write a program that uses one of these two.
+1. O oposto de `BNE` é `BEQ`. Tente escrever um programa que use `BEQ`.
+2. `BCC` e `BCS` ("branch on carry clear" e "branch on carry set") são usados para ramificar com base na flag de Carry. Escreva um programa que use uma dessas duas.
+3. (Extra) Faça um resumo com todas as instruções apresentadas até agora e escreva, com suas palavras, a função de cada uma delas.
 
-
-<h2 id='addressing'>Addressing modes</h2>
+<h2 id='addressing'>Modos de endereçamento (Addressing modes)</h2>
 
 The 6502 uses a 16-bit address bus, meaning that there are 65536 bytes of
 memory available to the processor. Remember that a byte is represented by two
@@ -187,32 +172,49 @@ into **Start** and **Length**, respectively.
 
 ### Absolute: `$c000` ###
 
-With absolute addressing, the full memory location is used as the argument to the instruction. For example:
+Com o endereçamento absoluto, o local completo da memória é usado como argumento para a instrução. Por exemplo:
 
-    STA $c000 ;Store the value in the accumulator at memory location $c000
-
+    STA $c000 ;Armazena o valor no acumulador no local de memória $c000
+    
 ### Zero page: `$c0` ###
 
-All instructions that support absolute addressing (with the exception of the jump
-instructions) also have the option to take a single-byte address. This type of
-addressing is called "zero page" - only the first page (the first 256 bytes) of
-memory is accessible. This is faster, as only one byte needs to be looked up,
-and takes up less space in the assembled code as well.
+Todas as instruções que suportam endereçamento absoluto (com exceção das instruções de salto) também têm a opção de usar um endereço de um único byte. Esse tipo de endereçamento é chamado de "página zero" - apenas a primeira página (os primeiros 256 bytes) da memória é acessível. Isso é mais rápido, pois apenas um byte precisa ser consultado, e também ocupa menos espaço no código montado.
+
+Página Zero é uma área especial de memória nos primeiros 256 bytes do espaço de endereço de 
+um computador que usa o processador 6502. Devido à sua localização especial (de $0000 a $00FF),
+acessar dados na Página Zero é mais rápido e requer menos instruções, tornando o código mais 
+eficiente.
+
+A Página Zero é comumente usada para armazenar variáveis e ponteiros que são frequentemente 
+acessados ou modificados, devido à sua rápida acessibilidade e eficiência em termos de espaço de código. Ela é ideal para operações críticas de desempenho, como loops de processamento gráfico, rotinas
+de manipulação de dados intensivos e funções que exigem acesso rápido e eficiente à memória.
+
+Os bytes armazenados na página zero podem ser utilizados para situações como contagem de 
+looks armazenamento e cálculo de ponteiros registros temporários variáveis de jogo de estado 
+controle de Flex buffet de entrada e saída e outras características que aprenderemos mais 
+à frente
 
 ### Zero page,X: `$c0,X` ###
 
-This is where addressing gets interesting. In this mode, a zero page address is given, and then the value of the `X` register is added. Here is an example:
+É aqui que o endereçamento se torna interessante. Neste modo, é fornecido um endereço de 
+página zero, e então o valor do registrador `X` é adicionado. Aqui está um exemplo:
 
-    LDX #$01   ;X is $01
-    LDA #$aa   ;A is $aa
-    STA $a0,X ;Store the value of A at memory location $a1
-    INX        ;Increment X
-    STA $a0,X ;Store the value of A at memory location $a2
+    LDX #$01   ;Atribui $01 ao registrador X
+    LDA #$aa   ;Atribui $aa ao registrador A
+    STA $a0,X  ;Armazena o valor de A no local de memória $a1
+    INX        ;Incrementa X
+    STA $a0,X  ;Armazena o valor de A no local de memória $a2
 
-If the result of the addition is larger than a single byte, the address wraps around. For example:
+Acompanhe o que ocorre neste conjunto de instruções, linha por linha, observando os 
+valores presentes nos registradores e ns endereço sde memória usados. Assim, aprenderá 
+bem o funcionamento destas instruções.
+
+Outro exemplo:
 
     LDX #$05
-    STA $ff,X ;Store the value of A at memory location $04
+    STA $ff,X ;Armazena o valor de A no local de memória $04
+	
+Para compreender as instruções acima, lembre-se que #$FF é o valor imediatamente antes do #$00.
 
 ### Zero page,Y: `$c0,Y` ###
 
@@ -517,7 +519,7 @@ of it like a sleep command. The game keeps running until the snake collides
 with the wall or itself.
 
 
-### Zero page usage ###
+### Página Zero: `$c0` ###
 
 The zero page of memory is used to store a number of game state variables, as
 noted in the comment block at the top of the game. Everything in `$00`, `$01`
