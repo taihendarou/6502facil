@@ -159,16 +159,21 @@ Em assembly, geralmente você usará rótulos com instruções de ramificação.
 
 <h2 id='addressing'>Modos de endereçamento (Addressing modes)</h2>
 
-The 6502 uses a 16-bit address bus, meaning that there are 65536 bytes of
-memory available to the processor. Remember that a byte is represented by two
-hex characters, so the memory locations are generally represented as `$0000 -
-$ffff`. There are various ways to refer to these memory locations, as detailed below.
+O 6502 usa um barramento de endereço de 16 bits, 
+o que significa que há 65536 bytes de memória 
+disponíveis para o processador. Lembre-se de que 
+um byte é representado por dois caracteres hexadecimais, 
+então os endereços de memória geralmente são representados 
+como `$0000 - $ffff`. Existem várias maneiras de se 
+referir a esses endereços de memória, conforme detalharemos 
+a seguir.
 
-With all these examples you might find it helpful to use the memory monitor to
-watch the memory change. The monitor takes a starting memory location and a
-number of bytes to display from that location. Both of these are hex values.
-For example, to display 16 bytes of memory from `$c000`, enter `c000` and `10`
-into **Start** and **Length**, respectively.
+Com todos esses exemplos, recomendo que use o monitor de memória 
+para observar em detalhes as mudanças de valores nos endereços 
+de memória durante a execução dos códigos. O monitor requer um 
+endereço de memória inicial e um número de bytes para exibir a partir 
+desse endereço. Ambos são valores hexadecimais. Por exemplo, para 
+exibir 16 bytes de memória de `$c000`, insira `c000` e `10` em **Início** e **Comprimento**, respectivamente.
 
 ### Absolute: `$c000` ###
 
@@ -218,53 +223,53 @@ Para compreender as instruções acima, lembre-se que #$FF é o valor imediatame
 
 ### Zero page,Y: `$c0,Y` ###
 
-This is the equivalent of zero page,X, but can only be used with `LDX` and `STX`.
+Este é similar ao zero page,X, mas pode ser usado apenas com `LDX` and `STX`.
 
-### Absolute,X and absolute,Y: `$c000,X` and `$c000,Y` ###
+### Absolute,X e absolute,Y: `$c000,X` e `$c000,Y` ###
 
-These are the absolute addressing versions of zero page,X and zero page,Y. For example:
+Estas são a versão com endereçamento absoluto de zero page,X e zero page, Y. Por exemplo:
 
     LDX #$01
-    STA $0200,X ;Store the value of A at memory location $0201
+    STA $0200,X ;Armazena o valor de A no endereço de memória $0201
 
-Unlike zero page,Y, absolute,Y can't be used with `STX` but can be used with `LDA` and `STA`.
+Diferentemente de zero page,Y, absolute,Y não pode ser usado com `STX`, mas pode ser usado 
+com `LDA` e `STA`.
 
-### Immediate: `#$c0` ###
+### Imediato: `#$c0` ###
 
-Immediate addressing doesn't strictly deal with memory addresses - this is the
-mode where actual values are used. For example, `LDX #$01` loads the value
-`$01` into the `X` register. This is very different to the zero page
-instruction `LDX $01` which loads the value at memory location `$01` into the
-`X` register.
+O endereçamento imediato não se restringe a endereços de memória - este é o modo onde valores 
+absolutos são utilizados. Por exemplo, `LDX #$01` carrega o valor `$01` no registrador `X`, o 
+que é completamente diferente da instrução de zero page `LDX $01`, que carrega o valor presente 
+no endereço de memória `$01` no registrador `X`.
 
-### Relative: `$c0` (or label) ###
+### Relativo: `$c0` (ou rótulo) ###
 
-Relative addressing is used for branching instructions. These instructions take
-a single byte, which is used as an offset from the following instruction.
+Endereçamento relativo é usado para instruções de ramificação (branch). Estas instruções ocupam 
+um único byte, que é utilizado como um offset a partir da instrução que vem em seguida.
 
-Assemble the following code, then click the **Hexdump** button to see the assembled code.
+Monte o código a seguir e então clique em **Hexdump** para ver o código em hexadecimal.
 
 {% include start.html %}
   LDA #$01
   CMP #$02
-  BNE notequal
+  BNE nao_igual
   STA $22
-notequal:
+nao_igual:
   BRK
 {% include end.html %}
 
-The hex should look something like this:
+O código em hexadecimal deverá ser algo como:
 
     a9 01 c9 02 d0 02 85 22 00
 
-`a9` and `c9` are the processor opcodes for immediate-addressed `LDA` and `CMP`
-respectively. `01` and `02` are the arguments to these instructions. `d0` is
-the opcode for `BNE`, and its argument is `02`. This means "skip over the next
-two bytes" (`85 22`, the assembled version of `STA $22`). Try editing the code
-so `STA` takes a two-byte absolute address rather than a single-byte zero page
-address (e.g. change `STA $22` to `STA $2222`). Reassemble the code and look at
-the hexdump again - the argument to `BNE` should now be `03`, because the
-instruction the processor is skipping past is now three bytes long.
+`a9` e `c9` são os opcodes do processador para endereçamento-imediato `LDA` e `CMP`,
+respectivamente. `01` e `02` são os argumentos para estas instruções. `d0` é
+o opcode para `BNE`, sendo `02` o seu argumento. Isto significa "pule os próximos 
+dois bytes" (`85 22`, a versão em linguagem de máquina de `STA $22`). Tente editar o 
+código para que `STA` utilize um endereço absoluto de dois bytes em vez de um endereço 
+de página zero (zero page) de um único byte (por exemplo, altere `STA $22` para `STA $2222`). 
+Remonte o código e olhe para o hexdump novamente - o argumento para `BNE` agora deve ser `03`, 
+porque a instrução que o processador está pulando agora tem três bytes de comprimento.
 
 ### Implicit ###
 
