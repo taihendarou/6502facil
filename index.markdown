@@ -181,7 +181,7 @@ Com o endereçamento absoluto, o local completo da memória é usado como argume
 
     STA $c000 ;Armazena o valor no acumulador no local de memória $c000
     
-### Zero page: `$c0` ###
+### Página Zero (Zero page) : `$c0` ###
 
 Todas as instruções que suportam endereçamento absoluto (com exceção das instruções de salto) também têm a opção de usar um endereço de um único byte. Esse tipo de endereçamento é chamado de "página zero" - apenas a primeira página (os primeiros 256 bytes) da memória é acessível. Isso é mais rápido, pois apenas um byte precisa ser consultado, e também ocupa menos espaço no código montado.
 
@@ -271,39 +271,27 @@ de página zero (zero page) de um único byte (por exemplo, altere `STA $22` par
 Remonte o código e olhe para o hexdump novamente - o argumento para `BNE` agora deve ser `03`, 
 porque a instrução que o processador está pulando agora tem três bytes de comprimento.
 
-### Implicit ###
+### Implícito ###
 
-Some instructions don't deal with memory locations (e.g. `INX` - increment the
-`X` register). These are said to have implicit addressing - the argument is
-implied by the instruction.
+Algumas instruções não necessitam de endereços de memória como argumento, como por exemplo `INX`, incrementa o valor presente no registrador `X`. Estas instruções possuem o que chamamos de endereçamento implícito. Ou seja, o argumento está implícito na instrução.
 
-### Indirect: `($c000)` ###
+### Indireto: `($c000)` ###
 
-Indirect addressing uses an absolute address to look up another address. The
-first address gives the least significant byte of the address, and the
-following byte gives the most significant byte. That can be hard to wrap your
-head around, so here's an example:
+O endereçamento indireto consiste em usar um endereço absoluto para buscar por outro endereço. O valor presente no endereço passado como argumento da instrução será o byte menos significativo do endereço final. O byte logo após ele será o byte mais significativo do endereço final. Isto ficará mais claro após você ver alguns exemplos:
 
 {% include start.html %}
 LDA #$01
 STA $f0
 LDA #$cc
 STA $f1
-JMP ($00f0) ;dereferences to $cc01
+JMP ($00f0) ;referência para $cc01
 {% include end.html %}
 
-In this example, `$f0` contains the value `$01` and `$f1` contains the value
-`$cc`. The instruction `JMP ($f0)` causes the processor to look up the two
-bytes at `$f0` and `$f1` (`$01` and `$cc`) and put them together to form the
-address `$cc01`, which becomes the new program counter. Assemble and step
-through the program above to see what happens. I'll talk more about `JMP` in
-the section on [Jumping](#jumping).
+Neste exemplo, `$f0` contém o valor `$01`, enquanto `$f1` contém o valor `$cc`. A instrução `JMP ($f0)` fará com que o processador busque os dois bytes presentes em `$f0` e `$f1` (que são `$01` e `$cc`) e junte-os para formar o endereço `$cc01`, que é para onde de fato o programa fará o salto. Monte este programa e analise linha por linha para ver o que acontece. Falaremos mais sobre `JMP` na sessão referente aos [saltos](#jumping).
 
-### Indexed indirect: `($c0,X)` ###
+### Indexação indireta: `($c0,X)` ###
 
-This one's kinda weird. It's like a cross between zero page,X and indirect.
-Basically, you take the zero page address, add the value of the `X` register to
-it, then use that to look up a two-byte address. For example:
+Pode parecer um pouco estranho, mas é como uma mistura entre zero page,X e endereçamento indireto. Basicamente, pegaremos um endereço da página zero e somaremos o valor presente no registrador `X`, para então usá-lo para buscar por um endereço de dois bytes. Por exemplo:
 
 {% include start.html %}
 LDX #$01
@@ -316,21 +304,12 @@ STY $0705
 LDA ($00,X)
 {% include end.html %}
 
-Memory locations `$01` and `$02` contain the values `$05` and `$07`
-respectively. Think of `($00,X)` as `($00 + X)`. In this case `X` is `$01`, so
-this simplifies to `($01)`. From here things proceed like standard indirect
-addressing - the two bytes at `$01` and `$02` (`$05` and `$07`) are looked up
-to form the address `$0705`.  This is the address that the `Y` register was
-stored into in the previous instruction, so the `A` register gets the same
-value as `Y`, albeit through a much more circuitous route. You won't see this
-much.
+Os endereços de memória `$01` e `$02` possuem, respectivamente, os valores `$05` e `$07`. Considere `($00,X)` como se fosse `($00 + X)`. Neste exemplo, `X` está com o valor de `$01`, então simplificamos para `($01)`. A partir daqui, continuamos como o endereçamento indireto padrão - os dois bytes em `$01` e `$02` (`$05` e `$07`) são buscados para formar o endereço `$0705`. Este é o endereço que o registrador `Y` tinha armazenado na instrução anterior, portanto o registrador `A` receberá o mesmo valor que `Y`.
 
 
-### Indirect indexed: `($c0),Y` ###
+### Indexado indiretamente: `($c0),Y` ###
 
-Indirect indexed is like indexed indirect but less insane. Instead of adding
-the `X` register to the address *before* dereferencing, the zero page address
-is dereferenced, and the `Y` register is added to the resulting address.
+O modo indexado indiretamente é semelhante ao indireto indexado, mas é menos complicado. Diferentemente de adicionar o registrador `X` ao endereço *antes* de acessá-lo, neste caso, primeiro acessamos o endereço na página zero. Em seguida, adicionamos o valor do registrador `Y` ao endereço que foi acessado. Confira o exemplo:
 
 {% include start.html %}
 LDY #$01
@@ -343,55 +322,42 @@ STX $0704
 LDA ($01),Y
 {% include end.html %}
 
-In this case, `($01)` looks up the two bytes at `$01` and `$02`: `$03` and
-`$07`. These form the address `$0703`. The value of the `Y` register is added
-to this address to give the final address `$0704`.
+Neste caso, `($01)` busca pelos dois bytes em `$01` e `$02`: `$03` e `$07`. Assim teremos o endereço `$0703`. O valor do registrador `Y` será adicionado a este endereço para chegarmos ao endereço final `$0704`.
 
-### Exercise ###
+### Exercício ###
 
-1. Try to write code snippets that use each of the 6502 addressing modes.
-   Remember, you can use the monitor to watch a section of memory.
+1. Escreva pequenos códigos usando cada um dos modos de endereçamento do 6502. Lembre-se que você pode usar o monitor daqui do simulador para acompanhar os valores de um bloco de memória.
 
 
-<h2 id='stack'>The stack</h2>
+<h2 id='stack'>A pilha (stack)</h2>
 
-The stack in a 6502 processor is just like any other stack - values are pushed
-onto it and popped ("pulled" in 6502 parlance) off it. The current depth of the
-stack is measured by the stack pointer, a special register. The stack lives in
-memory between `$0100` and `$01ff`. The stack pointer is initially `$ff`, which
-points to memory location `$01ff`. When a byte is pushed onto the stack, the
-stack pointer becomes `$fe`, or memory location `$01fe`, and so on.
+A pilha (stack) do processador 6502 é como qualquer outra pilha - valores são inseridos (push) e retirados (pull). Ou seja, valores são "empilhados". A profundidade atual da pilha é indicada por um registrador especial chamado *stack pointer* (que podemos traduzir como *ponteiro de pilha*). A pilha fica presente na memória, nos endereços entre `$0100` e `$01ff`. O ponteiro de pilhas tem `$ff` como valor inicial, que aponta para o endereço de memória `$01ff`. Quando um byte é inserido na pilha, o valor do ponteiro de pilha muda para `$fe`, ou endereço de memória `$01fe`, e assim por diante.
 
-Two of the stack instructions are `PHA` and `PLA`, "push accumulator" and "pull
-accumulator". Below is an example of these two in action.
+Duas instruções usadas para manipular a pilha são `PHA` e `PLA`, "push accumulator" (adiciona o valor do acumulador à pilha) e "pull accumulator" (retira um valor da pilha e coloca no acumulador). Veja um exemplo prático destas duas instruções:
 
 {% include start.html %}
   LDX #$00
   LDY #$00
-firstloop:
+primeiro_loop:
   TXA
   STA $0200,Y
   PHA
   INX
   INY
   CPY #$10
-  BNE firstloop ;loop until Y is $10
-secondloop:
+  BNE primeiro_loop ;fica em loop até que Y seja $10
+segundo_loop:
   PLA
   STA $0200,Y
   INY
-  CPY #$20      ;loop until Y is $20
-  BNE secondloop
+  CPY #$20      ;fica em loop até que Y seja $20
+  BNE segundo_loop
 {% include end.html %}
 
-`X` holds the pixel colour, and `Y` holds the position of the current pixel.
-The first loop draws the current colour as a pixel (via the `A` register),
-pushes the colour to the stack, then increments the colour and position.  The
-second loop pops the stack, draws the popped colour as a pixel, then increments
-the position. As should be expected, this creates a mirrored pattern.
+`X` armazena a cor, enquanto `Y` armazena a posição do pixel. O primeiro loop desenha a cor atual como um pixel (através do registrador `A`), insere o valor na pilha e então incrementa a cor e a posição. O segundo loop retira um byte da pilha, desenha essa cor na tela como um pixel e então incrementa a posição. O resultado esperado disso é um padrão espelhado.
 
 
-<h2 id='jumping'>Jumping</h2>
+<h2 id='jumping'>Saltos (Jumping)</h2>
 
 Jumping is like branching with two main differences. First, jumps are not
 conditionally executed, and second, they take a two-byte absolute address. For
