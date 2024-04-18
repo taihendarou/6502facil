@@ -476,27 +476,15 @@ A sub-rotina `init` desmembra para duas outras sub-rotinas, `initSnake` e `gener
     sta $13
     sta $15
 
-This loads the value `$11` into the memory location `$10`, the value `$10` into
-`$12`, and `$0f` into `$14`. It then loads the value `$04` into `$11`, `$13`
-and `$15`. This leads to memory like this:
+Isto carregará o valor `$11` no endereço de memória `$10`, o valor `$10` em `$12`, e `$0f` em `$14`. Então, carrega o valor `$04` em `$11`, `$13` e `$15`. Isso deixará a memória como a seguir:
 
     0010: 11 04 10 04 0f 04
 
-which represents the indirectly-addressed memory locations `$0411`, `$0410` and
-`$040f` (three pixels in the middle of the display). I'm labouring this point,
-but it's important to fully grok how indirect addressing works.
+que representa os endereços de memória indiretos `$0411`, `$0410` e `$040f` (três pixels no meio da tela). Estou insistindo neste ponto, mas é importante compreender completamente como funciona o endereçamento indireto.
 
-The next subroutine, `generateApplePosition`, sets the apple location to a
-random position on the display. First, it loads a random byte into the
-accumulator (`$fe` is a random number generator in this simulator). This is
-stored into `$00`. Next, a different random byte is loaded into the
-accumulator, which is then `AND`-ed with the value `$03`. This part requires a
-bit of a detour.
+A próxima sub-rotina, `generateApplePosition`, configura o endereço de memória da maçã para uma posição aleatória na tela. Primeiro, carrega um byte aleatório no acumulador (`$fe` é um gerador de números aleatórios neste simulador). Isso é armazenado em `$00`. Em seguida, um byte aleatório diferente é carregado no acumulador, que então é combinado usando a operação `AND` com o valor `$03`. Esta parte requer um pequeno desvio.
 
-The hex value `$03` is represented in binary as `00000011`. The `AND` opcode
-performs a bitwise AND of the argument with the accumulator. For example, if
-the accumulator contains the binary value `10101010`, then the result of `AND`
-with `00000011` will be `00000010`.
+O valor hexadecimal `$03` é representado em binário como `00000011`. O opcode `AND` performance uma operação bitwise AND entre o argumento e o acumulador. Por exemplo, se o acumulador contém o valor binário `10101010`, então o resultado do `AND` com `00000011` será `00000010`.
 
 The effect of this is to mask out the least significant two bits of the
 accumulator, setting the others to zero. This converts a number in the range of
