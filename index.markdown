@@ -378,7 +378,7 @@ destino:
 
 ### JSR/RTS ###
 
-`JSR` e `RTS`, que significam "jump to subroutine" (salto para subrotina) e "return from subroutine" (retornar da subrotina), são duas instruções que você comumente verá sendo utilizadas juntas. `JSR` é usada para saltar de uma parte do código para outra. `RTS` retorna para a o local do salto anterior. Se você está familiarizado com linguagens de mais alto nível, isto seria como executar uma função e então retornar.
+`JSR` e `RTS`, que significam "jump to subroutine" (salto para sub-rotina) e "return from subroutine" (retornar da sub-rotina), são duas instruções que você comumente verá sendo utilizadas juntas. `JSR` é usada para saltar de uma parte do código para outra. `RTS` retorna para a o local do salto anterior. Se você está familiarizado com linguagens de mais alto nível, isto seria como executar uma função e então retornar.
 
 O processador sabe para onde retornar porque `JSR` armazena o ponteiro atual na pilha antes de realizar o salto. `RTS` retira este endereço da pilha e salta de volta para o ponto de partida. Veja o exemplo:
 
@@ -436,9 +436,9 @@ Depois do bloco com comentários (linha iniciando com ponto e vírgula), as duas
     jsr init
     jsr loop
 
-`init` e `loop` são duas subrotinas. `init` configura o status inicial do jogo e `loop` é o loop principal do jogo.
+`init` e `loop` são duas sub-rotinas. `init` configura o status inicial do jogo e `loop` é o loop principal do jogo.
 
-A subrotina de `loop` chamará por outras subrotinas, sequencialmente, e então voltará para o início dela mesma.
+A sub-rotina de `loop` chamará por outras sub-rotinas, sequencialmente, e então voltará para o início dela mesma.
 
     loop:
       jsr readkeys
@@ -498,69 +498,43 @@ O resultado desta sub rotina para carregar com um byte aleatório no endereço `
 Praticamente todos os jogos possuem um loop de jogo em seu núcleo. Todos os loops de jogos seguem a mesma estrutura básica: recebem uma entrada do usuário, atualizam o estado do jogo e renderizam esse estado. Aqui, nosso loop fará exatamente isso.
 
 
-#### Reading the input ####
+#### Leitura de comandos do jogador ####
 
-The first subroutine, `readKeys`, takes the job of accepting user input. The
-memory location `$ff` holds the ascii code of the most recent key press in this
-simulator. The value is loaded into the accumulator, then compared to `$77`
-(the hex code for W), `$64` (D), `$73` (S) and `$61` (A). If any of these
-comparisons are successful, the program branches to the appropriate section.
-Each section (`upKey`, `rightKey`, etc.) first checks to see if the current
-direction is the opposite of the new direction. This requires another little detour.
+A primeira sub-rotina, `readKeys`, será responsável por aceitar os comandos inseridos pelo jogador. Neste simulador, o endereço de memória `$ff` armazena o código ascii da última tecla pressionada. O valor será carregado no acumulador e então comparado com `$77` (código hexadecimal para W), `$64 (hexadecimal para D), `$73` (hexadecimal para S) e `$61` (hexadecimal para A). Se alguma destas comparações for válida, o programa moverá a execução para a sessão apropriada. Cada sessão (`upKey`, `rightKey` etc) irá primeiro verificar se a direção atual da cobrinha é o oposto da nova direção e isso gerará um novo desvio.
 
-As stated before, the four directions are represented internally by the numbers
-1, 2, 4 and 8. Each of these numbers is a power of 2, thus they are represented
-by a binary number with a single `1`:
+Como mencionado, as quatro direções são representadas internamente pelos números 1, 2, 4 e 8. Todos estes números são potência de 2 e foram escolhidos porque cada um deles, em sistema binário, possuem um único dígito `1`, conforme podemos ver seguir:
 
-    1 => 0001 (up)
-    2 => 0010 (right)
-    4 => 0100 (down)
-    8 => 1000 (left)
+    1 => 0001 (cima)
+    2 => 0010 (direita)
+    4 => 0100 (baixo)
+    8 => 1000 (esquerda)
 
-The `BIT` opcode is similar to `AND`, but the calculation is only used to set
-the zero flag - the actual result is discarded. The zero flag is set only if the
-result of AND-ing the accumulator with argument is zero. When we're looking at
-powers of two, the zero flag will only be set if the two numbers are not the
-same. For example, `0001 AND 0001` is not zero, but `0001 AND 0010` is zero.
+O opcode `BIT` é semelhante ao `AND`, mas sua execução é utilizada apenas para ajustar a flag zero - o resultado efetivo da operação é descartado. A flag zero é definida somente se o resultado da operação de AND entre o acumulador e o argumento resultar em zero. Quando lidamos com potências de dois, a flag zero só será definida se os dois números forem diferentes. Por exemplo, `0001 AND 0001` não resulta em zero, enquanto `0001 AND 0010` resulta em zero.
 
-So, looking at `upKey`, if the current direction is down (4), the bit test will
-be zero. `BNE` means "branch if the zero flag is clear", so in this case we'll
-branch to `illegalMove`, which just returns from the subroutine. Otherwise, the
-new direction (1 in this case) is stored in the appropriate memory location.
+Sendo assim, considerando a rotina `upKey`, se a direção atual da cobrinha for para baixo (4), o teste de bit resultará em zero. `BNE` significa "branch if the zero flag is clear" (ramificar se a flag zero estiver desativada), então neste caso ocorrerá uma ramificação para `illegalMove`, que fará com que retornemos da sub-rotina atual. Caso a direção atual não seja para baixo (4), a nova direção (para cima) da cobrinha (1) será armazenada no endereço de memória apropriado. O mesmo princípio é aplicado nas demais direções.
 
+#### Atualizando o estado de jogo ####
 
-#### Updating the game state ####
+A próxima sub-rotina, `checkCollision`, delega para `checkAppleCollision` e `checkSnakeCollision`. `checkAppleCollision` apenas verifica se os dois bytes que armazenam a localização da maçã coincidem com os dois bytes que armazenam a localização da cabeça. Se coincidirem, o comprimento é aumentado e uma nova posição para a maçã é gerada.
 
-The next subroutine, `checkCollision`, defers to `checkAppleCollision` and
-`checkSnakeCollision`. `checkAppleCollision` just checks to see if the two
-bytes holding the location of the apple match the two bytes holding the
-location of the head. If they do, the length is increased and a new apple
-position is generated.
+`checkSnakeCollision` percorre os segmentos do corpo da cobrinha, comparando cada par de bytes com o par da cabeça. Se houver uma coincidência de valores, significa que houve uma colisão, então o jogo termina.
 
-`checkSnakeCollision` loops through the snake's body segments, checking each
-byte pair against the head pair. If there is a match, then game over.
-
-After collision detection, we update the snake's location. This is done at a
-high level like so: First, move each byte pair of the body up one position in
-memory. Second, update the head according to the current direction. Finally, if
-the head is out of bounds, handle it as a collision. I'll illustrate this with
-some ascii art. Each pair of brackets contains an x,y coordinate rather than a
-pair of bytes for simplicity.
+Depois de verificarmos se houve uma colisão, atualizamos a localização da cobrinha. Isso é feito da seguinte forma: Primeiro, movemos cada par de bytes do corpo, um por um, uma posição para cima na memória. Depois, atualizamos a cabeça de acordo com a direção atual. Por fim, se a cabeça estiver fora dos limites, consideramos que houve uma colusão. Vamos ilustrar isso com uma arte em ASCII. Considere que cada par de colchetes contém uma coordenada x e y (ao invés de um par de bytes), para simplificar.
 
       0    1    2    3    4
-    Head                 Tail
+    Cabeça              Cauda
     
-    [1,5][1,4][1,3][1,2][2,2]    Starting position
+    [1,5][1,4][1,3][1,2][2,2]    Posição inicial
 
-    [1,5][1,4][1,3][1,2][1,2]    Value of (3) is copied into (4)
+    [1,5][1,4][1,3][1,2][1,2]    Valor de (3) é copiado para (4)
     
-    [1,5][1,4][1,3][1,3][1,2]    Value of (2) is copied into (3)
+    [1,5][1,4][1,3][1,3][1,2]    Valor de (2) é copiado para (3)
     
-    [1,5][1,4][1,4][1,3][1,2]    Value of (1) is copied into (2)
+    [1,5][1,4][1,4][1,3][1,2]    Valor de (1) é copiado para (2)
     
-    [1,5][1,5][1,4][1,3][1,2]    Value of (0) is copied into (1)
+    [1,5][1,5][1,4][1,3][1,2]    Valor de (0) é copiado para (1)
     
-    [0,5][1,5][1,4][1,3][1,2]    Value of (0) is updated based on direction
+    [0,5][1,5][1,4][1,3][1,2]    Valor de (0) é atualizado de acordo com a direção
 
 At a low level, this subroutine is slightly more complex. First, the length is
 loaded into the `X` register, which is then decremented. The snippet below
@@ -625,7 +599,7 @@ I won't explain in depth how each of the directions work, but the above
 explanation should give you enough to work it out with a bit of study.
 
 
-#### Rendering the game ####
+#### Renderizando o jogo ####
 
 Because the game state is stored in terms of pixel locations, rendering the
 game is very straightforward. The first subroutine, `drawApple`, is extremely
