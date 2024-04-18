@@ -359,46 +359,35 @@ segundo_loop:
 
 <h2 id='jumping'>Saltos (Jumping)</h2>
 
-Jumping is like branching with two main differences. First, jumps are not
-conditionally executed, and second, they take a two-byte absolute address. For
-small programs, this second detail isn't very important, as you'll mostly be
-using labels, and the assembler works out the correct memory location from the
-label. For larger programs though, jumping is the only way to move from one
-section of the code to another.
+Saltos (Jumping) assemelham-se a ramificações, mas apresentam duas distinções importantes. A primeira é que os saltos são executados de maneira incondicional, ou seja, sempre ocorrem, independentemente de condições prévias. A segunda é que o salto sempre direciona para um endereço de dois bytes. Esta característica tem pouca relevância em programas menores, pois você utilizará rótulos (labels) e o assembler se encarregará de ajustar o endereço de memória correto a partir desses rótulos. No entanto, em programas maiores, os saltos são essenciais para transitar entre diferentes seções do código.
 
 ### JMP ###
 
-`JMP` is an unconditional jump. Here's a really simple example to show it in action:
+A instrução `JMP` representa um salto incondicional. Veja um exemplo bem simples para ver esta instrução em ação:
 
 {% include start.html %}
   LDA #$03
-  JMP there
+  JMP destino
   BRK
   BRK
   BRK
-there:
+destino:
   STA $0200
 {% include end.html %}
 
 
 ### JSR/RTS ###
 
-`JSR` and `RTS` ("jump to subroutine" and "return from subroutine") are a
-dynamic duo that you'll usually see used together. `JSR` is used to jump from
-the current location to another part of the code. `RTS` returns to the previous
-position. This is basically like calling a function and returning.
+`JSR` e `RTS`, que significam "jump to subroutine" (salto para subrotina) e "return from subroutine" (retornar da subrotina), são duas instruções que você comumente verá sendo utilizadas juntas. `JSR` é usada para saltar de uma parte do código para outra. `RTS` retorna para a o local do salto anterior. Se você está familiarizado com linguagens de mais alto nível, isto seria como executar uma função e então retornar.
 
-The processor knows where to return to because `JSR` pushes the address minus
-one of the next instruction onto the stack before jumping to the given
-location. `RTS` pops this location, adds one to it, and jumps to that location.
-An example:
+O processador sabe para onde retornar porque `JSR` armazena o ponteiro atual na pilha antes de realizar o salto. `RTS` retira este endereço da pilha e salta de volta para o ponto de partida. Veja o exemplo:
 
 {% include start.html %}
-  JSR init
+  JSR inicio
   JSR loop
-  JSR end
+  JSR fim
 
-init:
+inicio:
   LDX #$00
   RTS
 
@@ -408,68 +397,48 @@ loop:
   BNE loop
   RTS
 
-end:
+fim:
   BRK
 {% include end.html %}
 
-The first instruction causes execution to jump to the `init` label. This sets
-`X`, then returns to the next instruction, `JSR loop`. This jumps to the `loop`
-label, which increments `X` until it is equal to `$05`. After that we return to
-the next instruction, `JSR end`, which jumps to the end of the file. This
-illustrates how `JSR` and `RTS` can be used together to create modular code.
+A primeira instrução faz com que a execução execute com salto para o rótulo `inicio`. Lá, o programa atribuirá um valor para o registrador `X` e então a execução do programa retornará para a instrução logo abaixo `JSR inicio`, que é `JSR loop`. Isto significa que agora será realizado um salto para a instrução com o rótulo `loop`. Lá, o valor de `X` será incrementado em 1 até que seja igual a `$05`. Depois, o programa retornará e a instrução `JSR fim` será executada, a qual realizará um salto para o fim do programa. Este exemplo ilustra como `JSR` e `RTS` podem ser utilizados em conjunto para modularizar o seu código, semelhante ao que é feito em linguagens de alto nível como Python e C#.
 
 
-<h2 id='snake'>Creating a game</h2>
+<h2 id='snake'>Criando um jogo</h2>
 
-Now, let's put all this knowledge to good use, and make a game! We're going to
-be making a really simple version of the classic game 'Snake'.
+Agora, vamos colocar todo esse conhecimento em prática e criar um jogo! Vamos desenvolver uma versão bem simples do clássico jogo da cobrinha, 'Snake'.
 
-Even though this will be a simple version, the code will be substantially larger
-than all the previous examples. We will need to keep track of several memory
-locations together for the various aspects of the game. We can still do
-the necessary bookkeeping throughout the program ourselves, as before, but
-on a larger scale that quickly becomes tedious and can also lead to bugs that
-are difficult to spot. Instead we'll now let the assembler do some of the
-mundane work for us.
+Embora esta seja uma versão simplificada, o código será consideravelmente maior do que todos os exemplos anteriores. Precisaremos monitorar vários endereços de memória simultaneamente para os diferentes aspectos do jogo.
 
-In this assembler, we can define descriptive constants (or symbols) that represent
-numbers. The rest of the code can then simply use the constants instead of the
-literal number, which immediately makes it obvious what we're dealing with.
-You can use letters, digits and underscores in a name.
+Neste assembler, assim como na maioria dos disponíveis para programas efetivos, podemos definir constantes (ou símbolos) que representam números. Assim, poderemos usar no código as constantes ao invés de valores numéricos literais. Podemos usar letras, números e underline nos nomes das constantes.
 
-Here's an example. Note that immediate operands are still prefixed with a `#`.
+Veja um exemplo. Note que os operandos imediatos ainda necessitam do prefixo `#`.
 {% include start.html %}
-  define  sysRandom  $fe ; an address
-  define  a_dozen    $0c ; a constant
+  define  sysRandom  $fe ; um endereço
+  define  a_dozen    $0c ; uma constante
  
-  LDA sysRandom  ; equivalent to "LDA $fe"
+  LDA sysRandom  ; equivalente a "LDA $fe"
 
-  LDX #a_dozen   ; equivalent to "LDX #$0c"
+  LDX #a_dozen   ; equivalente a "LDX #$0c"
 {% include end.html %}
 
-The simulator widget below contains the entire source code of the game. I'll
-explain how it works in the following sections.
+O widget do simulador logo abaixo contém todo o código fonte do jogo. Vamos explicar como ele funciona nas sessões subsequentes.
 
-[Willem van der Jagt](https://twitter.com/wkjagt) made a [fully annotated gist
-of this source code](https://gist.github.com/wkjagt/9043907), so follow along
-with that for more details.
+[Willem van der Jagt](https://twitter.com/wkjagt) fez um [gist totalmente comentado deste código](https://gist.github.com/wkjagt/9043907), acesse para mais detalhes (em inglês).
 
 {% include snake.html %}
 
 
-### Overall structure ###
+### Estrutura geral ###
 
-After the initial block of comments (lines starting with semicolons), the first
-two lines are:
+Depois do bloco com comentários (linha iniciando com ponto e vírgula), as duas primeiras linhas são:
 
     jsr init
     jsr loop
 
-`init` and `loop` are both subroutines. `init` initializes the game state, and
-`loop` is the main game loop.
+`init` e `loop` são duas subrotinas. `init` configura o status inicial do jogo e `loop` é o loop principal do jogo.
 
-The `loop` subroutine itself just calls a number of subroutines sequentially,
-before looping back on itself:
+A subrotina de `loop` chamará por outras subrotinas, sequencialmente, e então voltará para o início dela mesma.
 
     loop:
       jsr readkeys
@@ -480,45 +449,21 @@ before looping back on itself:
       jsr spinwheels
       jmp loop
 
-First, `readkeys` checks to see if one of the direction keys (W, A, S, D) was
-pressed, and if so, sets the direction of the snake accordingly. Then,
-`checkCollision` checks to see if the snake collided with itself or the apple.
-`updateSnake` updates the internal representation of the snake, based on its
-direction. Next, the apple and snake are drawn. Finally, `spinWheels` makes the
-processor do some busy work, to stop the game from running too quickly. Think
-of it like a sleep command. The game keeps running until the snake collides
-with the wall or itself.
+Primeiro, `readkeys` verifica se uma das teclas direcionais (W, A, S, D) foi pressionada e, se sim, ajusta a direção da cobrinha de acordo. Em seguida, `checkCollision` confirma se houve colisão da cobrinha com ela mesma ou com a maçã. `updateSnake` atualiza a representação interna da cobrinha conforme sua nova direção. Depois, tanto a maçã quanto a cobrinha são desenhadas na tela. Por fim, `spinWheels` faz o processador realizar tarefas desnecessárias para retardar a execução do jogo, funcionando como um comando de pausa. O jogo continua até que a cobrinha colida com a parede ou consigo mesma.
 
 
 ### Página Zero: `$c0` ###
 
-The zero page of memory is used to store a number of game state variables, as
-noted in the comment block at the top of the game. Everything in `$00`, `$01`
-and `$10` upwards is a pair of bytes representing a two-byte memory location
-that will be looked up using indirect addressing.  These memory locations will
-all be between `$0200` and `$05ff` - the section of memory corresponding to the
-simulator display. For example, if `$00` and `$01` contained the values `$01`
-and `$02`, they would be referring to the second pixel of the display (
-`$0201` - remember, the least significant byte comes first in indirect addressing).
+A página zero da memória é utilizada para armazenar diversas variáveis de estado do jogo, conforme indicado no bloco de comentários no topo do código. Todos os endereços em `$00`, `$01` e de `$10` para cima correspondem a pares de bytes que representam uma localização de memória de dois bytes, a qual será acessada usando endereçamento indireto. Essas localizações de memória estarão todas entre `$0200` e `$05ff`, que é a seção da memória correspondente ao display do simulador. Por exemplo, se `$00` e `$01` contiverem os valores `$01` e `$02`, eles estariam indicando o segundo pixel do display (`$0201` - lembre-se, o byte menos significativo é o primeiro no endereçamento indireto).
 
-The first two bytes hold the location of the apple. This is updated every time
-the snake eats the apple. Byte `$02` contains the current direction. `1` means
-up, `2` right, `4` down, and `8` left.  The reasoning behind these numbers will
-become clear later.
+Os primeiros dois bytes armazenam a localização da maçã. Eles são atualizados sempre que a cobrinha come a maçã. O byte `$02` contém a direção atual. `1` significa cima, `2` significa direita, `4` baixo, e `8` significa esquerda. O motivo da escola destes números ficará mais claro depois.
 
-Finally, byte `$03` contains the current length of the snake, in terms of bytes
-in memory (so a length of 4 means 2 pixels).
+Por fim, o byte `$03` contém o comprimento atual da cobrinha, em termos de bytes na memória (então um comprimento de 4 equivale a 2 pixels).
 
+### Inicialização ###
 
-### Initialization ###
+A sub-rotina `init` desmembra para duas outras sub-rotinas, `initSnake` e `generateApplePosition`. `initSnake` define a direção e o comprimento da cobrinha, e então carrega os endereços iniciais de memória da cabeça e do corpo da cobrinha. O par de bytes em `$10` contém a localização na tela da cabeça, o par em `$12` contém a localização do único segmento do corpo, e `$14` contém a localização da cauda (a cauda é o último segmento do corpo e é desenhada em preto para manter a cobrinha em movimento). Isso ocorre no seguinte código:
 
-The `init` subroutine defers to two subroutines, `initSnake` and
-`generateApplePosition`. `initSnake` sets the snake direction, length, and then
-loads the initial memory locations of the snake head and body. The byte pair at
-`$10` contains the screen location of the head, the pair at `$12` contains the
-location of the single body segment, and `$14` contains the location of the
-tail (the tail is the last segment of the body and is drawn in black to keep
-the snake moving). This happens in the following code:
 
     lda #$11
     sta $10
