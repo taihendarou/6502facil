@@ -486,24 +486,16 @@ A próxima sub-rotina, `generateApplePosition`, configura o endereço de memóri
 
 O valor hexadecimal `$03` é representado em binário como `00000011`. O opcode `AND` performance uma operação bitwise AND entre o argumento e o acumulador. Por exemplo, se o acumulador contém o valor binário `10101010`, então o resultado do `AND` com `00000011` será `00000010`.
 
-The effect of this is to mask out the least significant two bits of the
-accumulator, setting the others to zero. This converts a number in the range of
-0&ndash;255 to a number in the range of 0&ndash;3.
+O efeito disto é que estaremos criando uma máscara dos bits menos significativos do acumulador, ficando estes com o valor um e os demais com o valor de zero. Essa operação converterá um número no intervalo de 0&ndash;255 para um número no intervalo de 0&ndash;3.
 
-After this, the value `2` is added to the accumulator, to create a final random
-number in the range 2&ndash;5.
+Depois disso o valor `2` será adicionado ao acumulador, para criar um último valor aleatório no intervalo de 2&ndash;5
 
-The result of this subroutine is to load a random byte into `$00`, and a random
-number between 2 and 5 into `$01`. Because the least significant byte comes
-first with indirect addressing, this translates into a memory address between
-`$0200` and `$05ff`: the exact range used to draw the display.
+O resultado desta sub rotina para carregar com um byte aleatório no endereço `$00` e um número entre 2 a 5 no endereço `$01`. Considerando que o bike menos significante vem primeiro no endereçamento indireto, isto nos leva a um endereço de memória que varia entre `$0200` e `$05ff`: O exato intervalo de endereços usados para o display deste simulador.
 
 
-### The game loop ###
+### O loop de jogo ###
 
-Nearly all games have at their heart a game loop. All game loops have the same
-basic form: accept user input, update the game state, and render the game
-state. This loop is no different.
+Praticamente todos os jogos possuem um loop de jogo em seu núcleo. Todos os loops de jogos seguem a mesma estrutura básica: recebem uma entrada do usuário, atualizam o estado do jogo e renderizam esse estado. Aqui, nosso loop fará exatamente isso.
 
 
 #### Reading the input ####
