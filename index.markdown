@@ -536,36 +536,21 @@ Depois de verificarmos se houve uma colisão, atualizamos a localização da cob
     
     [0,5][1,5][1,4][1,3][1,2]    Valor de (0) é atualizado de acordo com a direção
 
-At a low level, this subroutine is slightly more complex. First, the length is
-loaded into the `X` register, which is then decremented. The snippet below
-shows the starting memory for the snake.
+Quando trabalhamos em linguagem de baixo nível, realizar este tipo de verificação é um pouco mais complexo do que a maneira que foi explicado. Primeiro, o comprimento será carregado no registrador `X`, que então será decrementado. O bloco abaixo mostra a memória inicial para a cobrinha.
 
-    Memory location: $10 $11 $12 $13 $14 $15
+    Endereço de memória:   $10 $11 $12 $13 $14 $15
 
-    Value:           $11 $04 $10 $04 $0f $04
+    Valor:                 $11 $04 $10 $04 $0f $04
 
-The length is initialized to `4`, so `X` starts off as `3`. `LDA $10,x` loads the
-value of `$13` into `A`, then `STA $12,x` stores this value into `$15`. `X` is
-decremented, and we loop. Now `X` is `2`, so we load `$12` and store it into
-`$14`. This loops while `X` is positive (`BPL` means "branch if positive").
+A largura é inicialmente definida como `4`, logo, o valor de `X` começa em `3`. A instrução `LDA $10,x` carrega o valor localizado em `$13` no registrador `A`. Em seguida, `STA $12,X` armazena esse valor em `$15`. Após isso, `X` é decrementado e o loop se inicia. Com `X` agora em `2`, o valor em `$12` é carregado e armazenado no endereço `$14`. Este loop prosseguirá enquanto `X` for positivo, onde `BPL` representa "branch if positive" (ramificar se positivo).
 
-Once the values have been shifted down the snake, we have to work out what to
-do with the head. The direction is first loaded into `A`. `LSR` means "logical
-shift right", or "shift all the bits one position to the right". The least
-significant bit is shifted into the carry flag, so if the accumulator is `1`,
-after `LSR` it is `0`, with the carry flag set.
+Uma vez que os valores foram deslocados ao longo da cobrinha, precisamos decidir o que fazer com a cabeça. Primeiro, a direção é carregada em `A`. `LSR` significa "logical shift right" (deslocamento lógico para a direita), ou seja, "desloca todos os bits uma posição para a direita". O bit menos significativo é deslocado para a flag de carry, então, se o acumulador está em `1`, após o `LSR`, ele vai para `0`, com a flag de carry ativada.
 
-To test whether the direction is `1`, `2`, `4` or `8`, the code continually
-shifts right until the carry is set. One `LSR` means "up", two means "right",
-and so on.
+Para verificar se a direção é `1`, `2`, `4` ou `8`, o código realiza deslocamentos sucessivos para a direita até que a flag de carry seja ativada. Um deslocamento `LSR` indica "cima", dois deslocamentos indicam "direita" e assim sucessivamente.
 
-The next bit updates the head of the snake depending on the direction. This is
-probably the most complicated part of the code, and it's all reliant on how
-memory locations map to the screen, so let's look at that in more detail.
+O próximo bit atualiza a cabeça da cobrinha de acordo com a direção. Esta é possivelmente a parte mais complicada do código e tudo depende de como os endereços de memória são mapeados na tela. Sendo assim, vamos analisar com mais detalhes.
 
-You can think of the screen as four horizontal strips of 32 &times; 8 pixels.
-These strips map to `$0200-$02ff`, `$0300-$03ff`, `$0400-$04ff` and `$0500-$05ff`.
-The first rows of pixels are `$0200-$021f`, `$0220-$023f`, `$0240-$025f`, etc.
+Você pode pensar na tela como quatro faixas horizontais de 32 × 8 pixels. Essas faixas estão mapeadas em `$0200-$02ff`, `$0300-$03ff`, `$0400-$04ff` e `$0500-$05ff`. As primeiras linhas de pixels são `$0200-$021f`, `$0220-$023f`, `$0240-$025f`, etc.
 
 As long as you're moving within one of these horizontal strips, things are
 simple. For example, to move right, just increment the least significant byte
