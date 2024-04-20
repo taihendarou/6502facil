@@ -552,27 +552,11 @@ O próximo bit atualiza a cabeça da cobrinha de acordo com a direção. Esta é
 
 Você pode pensar na tela como quatro faixas horizontais de 32 × 8 pixels. Essas faixas estão mapeadas em `$0200-$02ff`, `$0300-$03ff`, `$0400-$04ff` e `$0500-$05ff`. As primeiras linhas de pixels são `$0200-$021f`, `$0220-$023f`, `$0240-$025f`, etc.
 
-As long as you're moving within one of these horizontal strips, things are
-simple. For example, to move right, just increment the least significant byte
-(e.g. `$0200` becomes `$0201`). To go down, add `$20` (e.g. `$0200` becomes
-`$0220`). Left and up are the reverse.
+Enquanto estamos nos movendo por dentro de uma dessas faixas horizontais, as coisas são relativamente simples de entender. Por exemplo, para se mover para a direita, basta incrementar o byte menos significativo (por exemplo, `$0200` se torna `$0201`). Para descer, adicione `$20` (por exemplo, `$0200` se torna `$0220`). Mover para a esquerda e para cima são o inverso disso.
 
-Going between sections is more complicated, as we have to take into account the
-most significant byte as well. For example, going down from `$02e1` should lead
-to `$0301`. Luckily, this is fairly easy to accomplish. Adding `$20` to `$e1`
-results in `$01` and sets the carry bit. If the carry bit was set, we know we
-also need to increment the most significant byte.
+Porém, mover por diferentes sessões é um pouco mais complicado, pois temos que considerar o byte mais significativo. Por exemplo, mover para baixo a partir de `$02e1` deve nos levar a `$0301`. Adicionar `$20` a `$e1` resulta em `$01` e ativa a flag de carry. Se a flag de carry está ativado, sabemos que também precisamos incrementar o byte mais significativo.
 
-After a move in each direction, we also need to check to see if the head
-would become out of bounds. This is handled differently for each direction. For
-left and right, we can check to see if the head has effectively "wrapped
-around". Going right from `$021f` by incrementing the least significant byte
-would lead to `$0220`, but this is actually jumping from the last pixel of the
-first row to the first pixel of the second row. So, every time we move right,
-we need to check if the new least significant byte is a multiple of `$20`. This
-is done using a bit check against the mask `$1f`. Hopefully the illustration
-below will show you how masking out the lowest 5 bits reveals whether a number
-is a multiple of `$20` or not.
+Após movermos a cabeça da cobra em qualquer direção, é essencial verificar se ela sairá dos limites da tela, uma condição que é verificada de maneiras distintas para cada direção. Nas movimentações para esquerda e direita, precisamos averiguar se ocorreu um "envolvimento" da tela. Por exemplo, ao mover para a direita a partir de `$021f` incrementando o byte menos significativo, chegamos a `$0220`. No entanto, isso na verdade representa um salto do último pixel da primeira linha para o primeiro pixel da segunda linha. Assim, a cada deslocamento para a direita, verificamos se o novo byte menos significativo é múltiplo de `$20`, usando uma verificação de bit contra a máscara `$1f`. A ilustração a seguir demonstrará como mascarar os 5 bits inferiores indica se um número é, ou não, múltiplo de `$20`.
 
     $20: 0010 0000
     $40: 0100 0000
@@ -580,8 +564,7 @@ is a multiple of `$20` or not.
 
     $1f: 0001 1111
 
-I won't explain in depth how each of the directions work, but the above
-explanation should give you enough to work it out with a bit of study.
+Não entraremos em detalhes para cada direção, mas a explicação acima deve dar uma visão panorâmica suficiente para servidor como ponto de partida em seus estudos.
 
 
 #### Renderizando o jogo ####
