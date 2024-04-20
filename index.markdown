@@ -4,6 +4,8 @@ layout: default
 
 <h2 id="intro">Introdução</h2>
 
+Neste pequeno e-book, vou mostrar a você como começar a escrever em linguagem de assembly 6502. O processador 6502 foi um grande sucesso nos anos setenta e oitenta, alimentando computadores famosos como o [BBC Micro](http://en.wikipedia.org/wiki/BBC_Micro), [Atari 2600](http://en.wikipedia.org/wiki/Atari_2600), [Commodore 64](http://en.wikipedia.org/wiki/Commodore_64),[Apple II](http://en.wikipedia.org/wiki/Apple_II) e o [Nintendo Entertainment System](http://en.wikipedia.org/wiki/Nintendo_Entertainment_System). Bender, em Futurama, [tem um processador 6502 como cérebro](http://www.transbyte.org/SID/SID-files/Bender_6502.jpg). [Até o Terminator foi programado em 6502](http://www.pagetable.com/docs/terminator/00-37-23.jpg).
+
 Mas qual a necessidade de aprender 6502? Afinal, é uma linguagem morta para um processador que não é mais utilizado, não é mesmo? Bom, se pensarmos por esse lado, o idioma latim também está morto em termos de uso prático, mas mesmo assim, há pessoas que continuam estudando, pois tem seu valor histórico e trata-se de um conhecimento que tem seu valor em determinadas áreas de estudo. [Q.E.D.](http://en.wikipedia.org/wiki/Q.E.D.)
 
 (Na verdade, processadores 6502 continuam sendo produzidos pelo [Western Design Center](http://www.westerndesigncenter.com/wdc/w65c02s-chip.cfm) e [vendidos para hobbistas](http://www.mouser.co.uk/Search/Refine.aspx?Keyword=65C02))
