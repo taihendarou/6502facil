@@ -2,9 +2,9 @@
 layout: basic
 ---
 
-<h2>Simulator</h2>
+<h2>Simulador</h2>
 
-To use the disassembler, click **Assemble**, then **Disassemble**. [Back to Easy 6502](index.html).
+Para usar o disassembler, clique em **Assemble**, e depois **Disassemble**. [Voltar para 6502 Fácil](index.html).
 
 {% include start.html %}
 start:
@@ -63,21 +63,21 @@ init:
   ldx #0
   lda walls
 
-;draw exactly 256 pixels of wall at top and bottom
+;desenha os 256 pixels da barede no topo e na base
 drawinitialwalls:
-  sta $200,x ;draw the top bit of wall
-  sta $400,x ;draw the bottom bit of wall
-  dex        ;count down from 0
-  cpx #0     ;until we hit 0
+  sta $200,x ;desenha o topo da parede
+  sta $400,x ;desenha a base da parede
+  dex        ;contagem decrescente a partir de 00
+  cpx #0     ;até atingirmos 0 novamente (256 ciclos
   bne drawinitialwalls
 
   lda #$10
   sta $80
   ldx #$0f
 
-;fill $81-$90 with $10 (initial wall offset)
+;preencher $81-$90 com $10 (offset inicial da parede)
 setinitialwalloffsets:
-  sta $81,x  ; target
+  sta $81,x  ; algo
   dex
   bpl setinitialwalloffsets
   rts
@@ -97,40 +97,40 @@ drawMap:
   ldx #$0f
 drawLoop:
   lda $81,x
-  sta $82,x ;shift wall offsets along
+  sta $82,x ;deslocar offset da parede junto
 
   tay
-  sty $02      ;store current wall offset in $02
-  lda pixels,y ;lookup current wall offset in pixels
-  sta $00      ;and store it in $00
+  sty $02      ;armazena offset atual da parede em $02
+  lda pixels,y ;busca offset atual da parede em pixels
+  sta $00      ;e armazena em $00 
   iny
-  lda pixels,y ;lookup current wall offset + 1 in pixels
-  sta $01      ;and store it in $01
-               ;$00 now points to a two-byte pixel memory location
+  lda pixels,y ;busca offset atual da parede + 1 pixel
+  sta $01      ;e armazena em $01
+               ;$00 agora aponta para um endereço de memória de 2 bytes
 
   lda walls
-  ldy $78      ;top edge of wall
+  ldy $78      ;limite superior da parede
   sta ($00),y
   iny
   sta ($00),y
 
   ldy $7b
-  sta ($00),y ;bottom edge of wall
+  sta ($00),y ;limite inferior da parede
   iny
   sta ($00),y
 
-  ldy $79     ;top edge of tunnel
-  lda #0      ;black for tunnel
+  ldy $79     ;limite superior do túnel
+  lda #0      ;preto para o túnel
   sta ($00),y
   iny
   sta ($00),y
 
   ldy $7a
-  sta ($00),y ;bottom edge of tunnel
+  sta ($00),y ;limite inferior do túnel
   iny
   sta ($00),y
 
-  ; move offsets right two pixels
+  ; mover offset dois pixels para a direita
   inc $78
   inc $79
   inc $7a
@@ -146,19 +146,19 @@ drawLoop:
 ;---
 
 genMap:
-  lda $80 ;$80 is next wall inflection point
-  cmp $81 ;$81 is next wall offset
+  lda $80 ;$80 é o ponto de inflexão da próxima parede
+  cmp $81 ;$81 é o offset da próxima parede
   beq newinflectionpoint
   lda $80
   clc
-  sbc $81 ;is next wall offset above or below inflection point?
+  sbc $81 ;o próximo deslocamento da parede está acima ou abaixo do ponto de inflexão?
   bpl raisewalls
   bmi lowerwalls
 newinflectionpoint:
   lda $fe
-  and #$f ;make 4-bit
-  asl     ;double (make even number)
-  sta $80 ;set $80 to random value
+  and #$f ;transforma em 4-bits
+  asl     ;duplicar (transforma em número par)
+  sta $80 ;define $80 para um valor aleatório
   rts
 lowerwalls:
   dec $81
