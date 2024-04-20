@@ -4,25 +4,17 @@ layout: default
 
 <h2 id="intro">Introdução</h2>
 
-Neste pequeno e-book, vou mostrar a você como começar a escrever em linguagem de 
-montagem 6502. O processador 6502 foi um grande sucesso nos anos setenta e 
-oitenta, alimentando computadores famosos como o 
-[BBC Micro](http://en.wikipedia.org/wiki/BBC_Micro), 
-[Atari 2600](http://en.wikipedia.org/wiki/Atari_2600), 
-[Commodore 64](http://en.wikipedia.org/wiki/Commodore_64),
-[Apple II](http://en.wikipedia.org/wiki/Apple_II) e o [Nintendo Entertainment 
-System](http://en.wikipedia.org/wiki/Nintendo_Entertainment_System). Bender, 
-em Futurama, [tem um processador 6502 como cérebro](http://www.transbyte.org/SID/SID-files/Bender_6502.jpg). 
-[Até o Terminator foi programado em 6502](http://www.pagetable.com/docs/terminator/00-37-23.jpg).
+Mas qual a necessidade de aprender 6502? Afinal, é uma linguagem morta para um processador que não é mais utilizado, não é mesmo? Bom, se pensarmos por esse lado, o idioma latim também está morto em termos de uso prático, mas mesmo assim, há pessoas que continuam estudando, pois tem seu valor histórico e trata-se de um conhecimento que tem seu valor em determinadas áreas de estudo. [Q.E.D.](http://en.wikipedia.org/wiki/Q.E.D.)
 
-Então, por que você iria querer aprender 6502? É uma língua morta, não é? Bem, o latim também é. E ainda assim, eles continuam ensinando isso. [Q.E.D.](http://en.wikipedia.org/wiki/Q.E.D.)
+(Na verdade, processadores 6502 continuam sendo produzidos pelo [Western Design Center](http://www.westerndesigncenter.com/wdc/w65c02s-chip.cfm) e [vendidos para hobbistas](http://www.mouser.co.uk/Search/Refine.aspx?Keyword=65C02))
 
-(Na verdade, fui informado de maneira confiável que os processadores 6502 ainda estão sendo produzidos pelo [Western Design Center](http://www.westerndesigncenter.com/wdc/w65c02s-chip.cfm) e [vendidos para hobbistas](http://www.mouser.co.uk/Search/Refine.aspx?Keyword=65C02), então claramente 6502 *não* é uma linguagem morta! Quem diria?)
+Independente do uso prático ou não, é uma excelente porta de entrada para o conhecimento de linguagens de baixo nível. Quando você aprende uma linguagem de baixo nível como essa, você passa a ter um entendimento mais profundo de como funcionam os microprocessadores, pois estamos lidando diretamente com os bytes que são processados. Quando você aprende algo assim, pode-se dizer que finalmente se tornou um [mago](http://skilldrick.co.uk/2011/04/magic-in-software-development/) da computação.
 
-Mas falando sério, acho que é valioso ter um entendimento da linguagem de montagem. A linguagem de montagem é o nível mais baixo de abstração em computadores - o ponto em que o código ainda é legível. A linguagem de montagem se traduz diretamente nos bytes que são executados pelo processador do seu computador. Se você entender como isso funciona, basicamente se tornou um [mágico](http://skilldrick.co.uk/2011/04/magic-in-software-development/) da computação.
+O 6502 foi desenvolvido em uma época em que a maioria dos desenvolvedores programavam diretamente em assembly, diferentemente das arquiteturas de processadores atuais, em que sua linguagem assembly foi mais pensada em ser escrita por compiladores do que diretamente por humanos.
 
-Então, por que 6502? Por que não uma linguagem de montagem *útil*, como [x86](http://en.wikipedia.org/wiki/X86)? Bem, eu não acho que aprender x86 seja útil. Não acho que você terá que *escrever* linguagem de montagem no seu trabalho diário - isso é puramente um exercício acadêmico, algo para expandir sua mente e seu pensamento. O 6502 foi originalmente escrito em uma época diferente, um tempo em que a maioria dos desenvolvedores estava escrevendo assembly diretamente, em vez de nessas novas linguagens de programação de alto nível. Então, foi projetado para ser escrito por humanos. As linguagens de montagem mais modernas são feitas para serem escritas por compiladores, então vamos deixar isso para eles. Além disso, 6502 é *divertido*. Ninguém nunca chamou x86 de *divertido*.
+<h2 id="intro">Sobre esta tradução</h2>
 
+Esta é uma tradução livre a partir do material original escrito por Nick Morgan. A tradução foi realizada do ponto de vista de uma pessoa interessada neste tema para fins de ROM Hacking. O conhecimento adquirido a partir deste estudo será uma excelente base para o processo de depuração de jogos desenvolvidos principalmente para NES e SNES (que utiliza uma variação do processador 6502 e possui uma linguagem com os mesmos fundamentos básicos). Esta linguagem também é utilizada nos consoles da família Atari (2600, 5200, 7800, Lynx), além do TurboGrafx-16 (PC Engine no Japão).
 
 <h2 id="first-program">Nosso primeiro programa</h2>
 
