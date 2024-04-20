@@ -569,22 +569,8 @@ Não entraremos em detalhes para cada direção, mas a explicação acima deve d
 
 #### Renderizando o jogo ####
 
-Because the game state is stored in terms of pixel locations, rendering the
-game is very straightforward. The first subroutine, `drawApple`, is extremely
-simple. It sets `Y` to zero, loads a random colour into the accumulator, then
-stores this value into `($00),y`. `$00` is where the location of the apple is
-stored, so `($00),y` dereferences to this memory location. Read the "Indirect
-indexed" section in [Addressing modes](#addressing) for more details.
+Como o estado do jogo é armazenado em termos de localizações de pixels, renderizar o jogo é algo relativamente direto ao ponto. A primeira sub-rotina, `drawApple`, é muito simples: ela configura o registrador `Y` como zero, carrega uma cor aleatória no acumulador (`A`) e armazena esse valor em `($00),y`. O endereço `$00` é onde a posição da maçã está armazenada, portanto `($00),y` refere-se a este local de memória. Para mais detalhes, consulte a seção "Indexado Indireto" em [Modos de Endereçamento](#addressing).
 
-Next comes `drawSnake`. This is pretty simple too - we first undraw the tail
-and then draw the head. `X` is set to the length of the snake, so we can index
-to the right pixel, and we set `A` to zero then perform the write using the
-indexed indirect addressing mode. Then we reload `X` to index to the head, set
-`A` to one and store it at `($10,x)`. `$10` stores the two-byte location of
-the head, so this draws a white pixel at the current head position. As only
-the head and the tail of the snake move, this is enough to keep the snake
-moving.
+A seguir, temos `drawSnake`, que também é simples: primeiro apagamos a cauda e, em seguida, desenhamos a cabeça. Definimos o registrador `X` com o comprimento da cobra, permitindo-nos indexar ao pixel correto. Em seguida, ajustamos o `A` para zero e realizamos a escrita usando o modo de endereçamento indexado indireto. Recarregamos o `X` para indexar à cabeça, ajustamos o `A` para um e armazenamos em `($10,x)`. O endereço `$10` contém a localização de dois bytes da cabeça, portanto isso desenha um pixel branco na posição atual da cabeça. Como apenas a cabeça e a cauda da cobra se movem, isso é suficiente para manter a cobra em movimento.
 
-The last subroutine, `spinWheels`, is just there because the game would run too
-fast otherwise. All `spinWheels` does is count `X` down from zero until it hits
-zero again. The first `dex` wraps, making `X` `#$ff`.
+A última sub-rotina, `spinWheels`, é usada simplesmente porque, sem ela, o jogo correria rápido demais. O que `spinWheels` faz é contar o `X` decrescendo de zero até atingir zero novamente. O primeiro `dex` faz com que o `X` envolva para `#$ff`.
